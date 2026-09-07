@@ -155,6 +155,7 @@ section[hidden]{display:none}
   </section>
 
   <section id="tab-clubs" hidden>
+    <div class="ctl"><label><input type="checkbox" id="multi" checked> Only clubs with more than one shooter</label><span class="count" id="clubcount"></span></div>
     <div class="tbl"><table id="clubs"><thead></thead><tbody></tbody></table></div>
     <p class="note">Club from the SSI squadding list, with spelling variants and abbreviations merged (HPI = Hokksund, HPS = Hamar, BSK = Bergen, LOP = Lillestrøm, OFS = Oslo Feltskyttere, PPK = Porsgrunn, SSL = Sportsskytterligaen, SSS = Skien, TDS = Trondheim, GPK = Gyland, BPK = Bergen Pistolklubb, KDS = Kristiansund, DSSA = Arendal, NVS = Nordvest, SFS = Sogn og Fjordane, S-SSL = Stavanger, ASLD = Akademisk). Shooters without a squad entry are not counted.</p>
   </section>
@@ -330,7 +331,10 @@ const clubCols=[
   {h:'Best<br>place',v:r=>r.bestplace,f:r=>r.bestplace},
   {h:'Best shooter',left:true,v:r=>r.best,f:r=>`${esc(r.best)} <span class="muted">${f2(r.bestpct)}%</span>`},
 ];
-makeTable('clubs',clubCols,D.clubs,{sort:{i:1,dir:-1}});
+const multi=document.getElementById('multi');
+const clubTable=makeTable('clubs',clubCols,D.clubs,{sort:{i:1,dir:-1},filter:r=>!multi.checked||r.n>1,
+  onRender:list=>{document.getElementById('clubcount').textContent=`${list.length} of ${D.clubs.length} clubs`;}});
+multi.addEventListener('input',()=>clubTable.render());
 
 // ---------- tabs ----------
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{
